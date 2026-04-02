@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Input } from '@/components/ui/Input';
+import { AirportInput } from '@/components/ui/AirportInput';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { useI18n } from '@/i18n';
@@ -75,25 +76,21 @@ export function SearchForm({ onSearch, loading, initialValues }: SearchFormProps
     <form onSubmit={handleSubmit} noValidate aria-label="Flight search form">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Origin */}
-        <Input
+        <AirportInput
           label={t.form.origin}
-          placeholder={t.form.originPlaceholder}
           value={values.origin}
-          onChange={(e) => set('origin', e.target.value)}
+          onChange={(iata) => set('origin', iata)}
           error={errors.origin}
           required
-          autoComplete="off"
         />
 
         {/* Destination */}
-        <Input
+        <AirportInput
           label={t.form.destination}
-          placeholder={t.form.destinationPlaceholder}
           value={values.destination}
-          onChange={(e) => set('destination', e.target.value)}
+          onChange={(iata) => set('destination', iata)}
           error={errors.destination}
           required
-          autoComplete="off"
         />
 
         {/* Passengers */}
