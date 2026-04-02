@@ -1,0 +1,33 @@
+{
+  "name": "SkyRoute Finder",
+  "short_name": "SkyRoute",
+  "description": "Find the cheapest flights and hotels from trusted sources",
+  "start_url": "/user",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0ea5e9",
+  "theme_color": "#0ea5e9",
+  "categories": ["travel", "utilities"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/icons/airplane-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Search Flights",
+      "url": "/user",
+      "description": "Search for cheap flights"
+    },
+    {
+      "name": "Admin",
+      "url": "/admin",
+      "description": "Admin dashboard"
+    }
+  ]
+}

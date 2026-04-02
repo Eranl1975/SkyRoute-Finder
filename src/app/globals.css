@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette */
+  --color-sky-50: #f0f9ff;
+  --color-sky-100: #e0f2fe;
+  --color-sky-200: #bae6fd;
+  --color-sky-400: #38bdf8;
+  --color-sky-500: #0ea5e9;
+  --color-sky-600: #0284c7;
+  --color-sky-700: #0369a1;
+  --color-sky-900: #0c4a6e;
+
+  --color-navy-900: #0f172a;
+  --color-navy-800: #1e293b;
+  --color-navy-700: #334155;
+
+  --color-orange-400: #fb923c;
+  --color-orange-500: #f97316;
+  --color-orange-600: #ea580c;
+
+  --color-surface: #f8fafc;
+  --color-surface-card: #ffffff;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Transitions */
+  --transition-base: 150ms ease;
+}
+
+/* Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-navy-900);
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+  line-height: 1.6;
+}
+
+/* RTL support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .ltr-only {
+  direction: ltr;
+}
+
+/* Focus visible ring */
+:focus-visible {
+  outline: 2px solid var(--color-sky-500);
+  outline-offset: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Airplane animation keyframes */
+@keyframes fly-across {
+  0%   { transform: translateX(-120%) translateY(0) rotate(-5deg); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translateX(0%) translateY(-8px) rotate(2deg); opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(120%) translateY(-4px) rotate(5deg); opacity: 0; }
+}
+
+@keyframes gentle-hover {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%       { transform: translateY(-6px) rotate(2deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px #38bdf8); }
+  50%       { filter: drop-shadow(0 0 12px #0ea5e9); }
+}
+
+/* Utility: card elevation */
+.card-shadow {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+.card-shadow-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
