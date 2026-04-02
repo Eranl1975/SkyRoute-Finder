@@ -36,12 +36,12 @@ function withDateRefinements<T extends typeof flightSearchParamsBase>(schema: T)
 
 export const flightSearchParamsSchema = withDateRefinements(flightSearchParamsBase);
 
-export const searchParamsSchema = withDateRefinements(
-  flightSearchParamsBase.extend({
-    includeHotel: z.boolean().default(true),
-    attractionKeyword: z.string().max(80).optional(),
-  })
-);
+const searchParamsBaseExtended = flightSearchParamsBase.extend({
+  includeHotel: z.boolean().default(true),
+  attractionKeyword: z.string().max(80).optional(),
+});
 
-export type SearchParamsInput = z.input<typeof searchParamsSchema>;
-export type SearchParamsOutput = z.output<typeof searchParamsSchema>;
+export const searchParamsSchema = withDateRefinements(searchParamsBaseExtended);
+
+export type SearchParamsInput = z.input<typeof searchParamsBaseExtended>;
+export type SearchParamsOutput = z.output<typeof searchParamsBaseExtended>;

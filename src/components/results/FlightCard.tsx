@@ -104,7 +104,7 @@ export function FlightCard({ flight, onFavorite, isFavorited }: FlightCardProps)
               onClick={() => setShowApproval(true)}
               className="flex-1 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold transition-colors min-h-[44px]"
             >
-              {featureFlags.bookingEnabled ? t.results.bookFlight : 'Review & Book'}
+              {featureFlags.bookingEnabled ? t.results.bookNow : 'Review & Book'}
             </button>
             <BookingLink url={flight.bookingUrl} />
             {onFavorite && (

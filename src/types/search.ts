@@ -3,6 +3,7 @@ import type { HotelSearchResult } from './hotel';
 
 export interface SearchParams extends FlightSearchParams {
   includeHotel: boolean;
+  attractionKeyword?: string;
 }
 
 export type SearchStatus =
