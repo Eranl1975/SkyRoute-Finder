@@ -1,4 +1,4 @@
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import type { SupportedLocale } from '@/lib/constants';
 
 const LOCALE_MAP: Record<SupportedLocale, string> = {

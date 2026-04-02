@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
-import { format, differenceInMinutes, parseISO } from 'date-fns';
+import { differenceInMinutes, parseISO } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
@@ -13,9 +13,10 @@ export function formatPrice(amount: number, currency: string, locale = 'en-US'):
   }).format(amount);
 }
 
-export function formatDateTime(iso: string, locale = 'en-US'): string {
+export function formatDateTime(iso: string): string {
   try {
-    return format(parseISO(iso), 'MMM d, HH:mm');
+    const d = parseISO(iso);
+    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(d);
   } catch {
     return iso;
   }
@@ -23,7 +24,8 @@ export function formatDateTime(iso: string, locale = 'en-US'): string {
 
 export function formatDate(iso: string): string {
   try {
-    return format(parseISO(iso), 'MMM d, yyyy');
+    const d = parseISO(iso);
+    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(d);
   } catch {
     return iso;
   }

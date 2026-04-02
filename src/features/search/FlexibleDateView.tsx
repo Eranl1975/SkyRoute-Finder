@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, parseISO } from 'date-fns';
+import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, parseISO } from 'date-fns';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { formatPrice } from '@/lib/utils';
 import { cn } from '@/lib/utils';
@@ -18,8 +17,8 @@ interface DayFare {
 interface FlexibleDateViewProps {
   origin: string;
   destination: string;
-  passengers: number;
-  onSelectDate: (date: string) => void;
+  baseDate?: string;
+  onSelectDate?: (date: string) => void;
 }
 
 // Mock cheapest-by-day data.
@@ -42,12 +41,13 @@ function generateMockMonth(origin: string, destination: string, month: Date): Da
 
 const MONTHS_AHEAD = 3;
 
-export function FlexibleDateView({ origin, destination, passengers, onSelectDate }: FlexibleDateViewProps) {
+export function FlexibleDateView({ origin, destination, baseDate, onSelectDate }: FlexibleDateViewProps) {
   const today = new Date();
-  const [viewMonth, setViewMonth] = useState(today);
+  const startMonth = baseDate ? startOfMonth(parseISO(baseDate)) : today;
+  const [viewMonth, setViewMonth] = useState(startMonth);
   const [loading, setLoading] = useState(false);
   const [fares, setFares] = useState<DayFare[]>(() =>
-    generateMockMonth(origin, destination, today)
+    generateMockMonth(origin, destination, startMonth)
   );
 
   const loadMonth = useCallback(async (month: Date) => {
@@ -122,7 +122,7 @@ export function FlexibleDateView({ origin, destination, passengers, onSelectDate
                 <button
                   key={day.date}
                   disabled={isPast || day.price === null}
-                  onClick={() => onSelectDate(day.date)}
+                  onClick={() => onSelectDate?.(day.date)}
                   className={cn(
                     'flex flex-col items-center justify-center rounded-xl p-1.5 transition-all min-h-[52px]',
                     'text-xs disabled:opacity-30 disabled:cursor-not-allowed',

@@ -1,7 +1,7 @@
 import type { RawFlight, NormalizedFlight } from '@/types/flight';
 import { MAX_FLIGHT_RESULTS } from '@/lib/constants';
 import { trustScore } from '@/skills/sourceTrust/scoring';
-import { formatPrice, formatDateTime, formatDuration, flightDuration } from '@/lib/utils';
+import { formatPrice, formatDateTime, flightDuration } from '@/lib/utils';
 import { TRUST_BADGE_LABELS } from '@/lib/constants';
 
 /** Rank: price ASC → trust DESC → stops ASC */

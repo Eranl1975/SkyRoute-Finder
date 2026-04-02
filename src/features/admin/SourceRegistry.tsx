@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useI18n } from '@/i18n';
 import { TRUSTED_SOURCES } from '@/config/trusted-sources';

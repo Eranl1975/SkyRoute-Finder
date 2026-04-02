@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { I18nProvider } from '@/i18n';
+
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'SkyRoute Finder — Cheapest Flights',
@@ -24,12 +27,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
         {/* PWA */}
         <meta name="application-name" content="SkyRoute Finder" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -38,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/icons/airplane-icon.svg" />
       </head>
-      <body>
+      <body className={inter.className}>
         <I18nProvider>{children}</I18nProvider>
       </body>
     </html>

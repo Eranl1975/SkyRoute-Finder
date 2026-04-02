@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { buildNotFoundExplanation } from '@/skills/flightSearch/explanations';
 import { assertBookingEnabled } from '@/skills/bookingScaffold';
 import type { FlightSearchParams } from '@/types/flight';
