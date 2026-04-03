@@ -57,6 +57,17 @@ export function FlightCard({ flight, onFavorite, isFavorited }: FlightCardProps)
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <span className="font-semibold text-slate-900 text-base">{flight.airline}</span>
+            {flight.flightNumber && (
+              <a
+                href={flight.bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-mono bg-slate-100 text-slate-600 hover:bg-sky-100 hover:text-sky-700 px-2 py-0.5 rounded transition-colors"
+                title="Click to open this flight on airline website"
+              >
+                {flight.flightNumber} ↗
+              </a>
+            )}
             <Badge variant={flight.isDirect ? 'direct' : 'stopover'}>
               {flight.isDirect ? t.results.direct : flight.stopSummary}
             </Badge>

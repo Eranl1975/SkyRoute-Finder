@@ -79,6 +79,14 @@ export function FlightDetailsModal({ flight, onClose }: FlightDetailsModalProps)
         {/* Details rows */}
         <div className="mb-4">
           <Row label="Airline" value={<span className="flex items-center gap-2">{flight.airline} <Badge variant={flight.providerTrust}>{flight.trustBadge}</Badge></span>} />
+          {flight.flightNumber && (
+            <Row label="Flight №" value={
+              <a href={flight.bookingUrl} target="_blank" rel="noopener noreferrer"
+                className="font-mono text-sky-600 hover:text-sky-800 underline underline-offset-2">
+                {flight.flightNumber} ↗
+              </a>
+            } />
+          )}
           <Row label="Flight type" value={flight.isDirect ? '✅ Direct' : `🔄 ${flight.stopSummary}`} />
           <Row label="Duration" value={formatDuration(flight.durationMinutes)} />
           <Row label="Baggage" value={`🧳 ${flight.baggageSummary}`} />

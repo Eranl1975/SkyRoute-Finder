@@ -64,8 +64,13 @@ export class MockHotelProvider implements IHotelProvider {
   async search(params: HotelSearchParams): Promise<RawHotel[]> {
     await new Promise((r) => setTimeout(r, 200 + Math.random() * 150));
 
+    // Generate a destination-specific Booking.com deep-link so the "Book" button
+    // opens a real search for the user's destination with their dates.
+    const bookingUrl = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(params.destination)}&checkin=${params.checkIn}&checkout=${params.checkOut}&group_adults=${params.guests}&no_rooms=1`;
+
     return MOCK_HOTELS.map((tpl): RawHotel => ({
       ...tpl,
+      bookingUrl,
       id: generateId(),
       city: params.destination,
       isMock: true,

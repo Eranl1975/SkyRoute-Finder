@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FlightCard } from './FlightCard';
 import { HotelCard } from './HotelCard';
+import { AirbnbBanner } from './AirbnbBanner';
 import { EmptyState } from './EmptyState';
 import { Badge } from '@/components/ui/Badge';
 import { useI18n } from '@/i18n';
@@ -102,6 +103,16 @@ export function ResultsList({ result, favorites = new Set(), onFavorite }: Resul
           ) : (
             <EmptyState type="hotel" reasons={hotel.notFoundReasons} />
           )}
+
+          {/* Airbnb alternative search */}
+          <div className="mt-4">
+            <AirbnbBanner
+              destination={result.params.destination}
+              checkIn={result.params.startDate}
+              checkOut={result.params.endDate}
+              guests={result.params.passengers}
+            />
+          </div>
         </section>
       )}
     </div>

@@ -159,10 +159,15 @@ export class DuffelAdapter implements IFlightProvider {
           trolleyCount: params.baggage.trolleyCount,
         };
 
+        const flightNum = firstSeg.marketing_carrier_flight_number
+          ? `${firstSeg.marketing_carrier.iata_code} ${firstSeg.marketing_carrier_flight_number}`
+          : undefined;
+
         return [{
           id: generateId(),
           airline: firstSeg.marketing_carrier.name,
           airlineCode: firstSeg.marketing_carrier.iata_code,
+          flightNumber: flightNum,
           origin: firstSeg.origin.iata_code,
           destination: lastSeg.destination.iata_code,
           departureAt: firstSeg.departing_at,

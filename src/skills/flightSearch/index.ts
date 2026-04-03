@@ -58,9 +58,13 @@ export async function runFlightSearchSkill(input: FlightSearchInput): Promise<Fl
     )
   );
 
+  const now = Date.now();
   const allRaw: RawFlight[] = rawResults.flatMap((r) =>
     r.status === 'fulfilled' ? r.value : []
-  ).filter((f) => f.price > 0); // exclude deep-link placeholders (price=0)
+  ).filter((f) =>
+    f.price > 0 &&                                     // exclude price=0 deep-link placeholders
+    new Date(f.departureAt).getTime() > now            // exclude past flights
+  );
 
   logs.push({
     timestamp: nowISO(),

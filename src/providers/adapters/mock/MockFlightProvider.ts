@@ -11,6 +11,7 @@ const MOCK_FLIGHTS: Omit<RawFlight, 'origin' | 'destination' | 'departureAt' | '
   {
     airline: 'Turkish Airlines',
     airlineCode: 'TK',
+    flightNumber: 'TK 701',
     price: 489,
     currency: 'USD',
     isDirect: false,
@@ -23,6 +24,7 @@ const MOCK_FLIGHTS: Omit<RawFlight, 'origin' | 'destination' | 'departureAt' | '
   {
     airline: 'easyJet',
     airlineCode: 'U2',
+    flightNumber: 'U2 8401',
     price: 541,
     currency: 'USD',
     isDirect: false,
@@ -35,6 +37,7 @@ const MOCK_FLIGHTS: Omit<RawFlight, 'origin' | 'destination' | 'departureAt' | '
   {
     airline: 'Ryanair',
     airlineCode: 'FR',
+    flightNumber: 'FR 2714',
     price: 598,
     currency: 'USD',
     isDirect: false,
@@ -47,6 +50,7 @@ const MOCK_FLIGHTS: Omit<RawFlight, 'origin' | 'destination' | 'departureAt' | '
   {
     airline: 'British Airways',
     airlineCode: 'BA',
+    flightNumber: 'BA 163',
     price: 872,
     currency: 'USD',
     isDirect: true,
@@ -59,6 +63,7 @@ const MOCK_FLIGHTS: Omit<RawFlight, 'origin' | 'destination' | 'departureAt' | '
   {
     airline: 'El Al',
     airlineCode: 'LY',
+    flightNumber: 'LY 315',
     price: 940,
     currency: 'USD',
     isDirect: true,

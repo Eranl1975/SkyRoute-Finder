@@ -30,6 +30,7 @@ export interface RawFlight {
   id: string;
   airline: string;
   airlineCode: string;
+  flightNumber?: string; // e.g. "TK 701", "FR 1234" — undefined when not available from provider
   origin: string;
   destination: string;
   departureAt: string; // ISO
