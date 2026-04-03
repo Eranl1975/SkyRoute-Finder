@@ -9,7 +9,7 @@ import { MockFlightProvider } from './adapters/mock/MockFlightProvider';
 import { MockHotelProvider } from './adapters/mock/MockHotelProvider';
 import { ElAlAdapter } from './adapters/airlines/ElAlAdapter';
 import { RyanairAdapter } from './adapters/airlines/RyanairAdapter';
-import { AmadeusAdapter } from './adapters/airlines/AmadeusAdapter';
+import { DuffelAdapter } from './adapters/airlines/DuffelAdapter';
 import { BookingComAdapter } from './adapters/hotels/BookingComAdapter';
 import { env } from '@/lib/env';
 
@@ -25,12 +25,11 @@ export function getProviderRegistry(): ProviderRegistry {
 
   const isMock = env.isMockMode;
 
-  // In live mode, include live adapters first + mock as fallback so results
-  // are never empty when live APIs return nothing (e.g. routes with no fares).
-  // Amadeus covers 400+ airlines — runs alongside Ryanair for broader coverage.
+  // In live mode: Ryanair (free, no key) + Duffel (300+ airlines, key needed) + mock fallback.
+  // Duffel returns empty silently when DUFFEL_ACCESS_TOKEN is not set.
   const flightAdapters: IFlightProvider[] = isMock
     ? [new MockFlightProvider()]
-    : [new ElAlAdapter(), new RyanairAdapter(), new AmadeusAdapter(), new MockFlightProvider()];
+    : [new ElAlAdapter(), new RyanairAdapter(), new DuffelAdapter(), new MockFlightProvider()];
 
   const hotelAdapters: IHotelProvider[] = isMock
     ? [new MockHotelProvider()]

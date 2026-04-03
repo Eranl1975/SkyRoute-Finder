@@ -116,14 +116,14 @@ export const TRUSTED_SOURCES: SourceMetadata[] = [
     isOfficial: true,
     addedAt: '2024-01-01T00:00:00.000Z',
   },
-  // Amadeus GDS — multi-airline (400+ carriers)
+  // Duffel GDS — multi-airline (300+ carriers, free signup at app.duffel.com)
   {
-    id: 'amadeus',
-    name: 'Amadeus (Multi-Airline)',
-    domain: 'amadeus.com',
+    id: 'duffel',
+    name: 'Duffel (Multi-Airline)',
+    domain: 'duffel.com',
     trustLevel: 'trusted_partner',
     type: 'airline',
-    country: 'ES',
+    country: 'GB',
     isActive: true,
     isOfficial: false,
     addedAt: '2024-01-01T00:00:00.000Z',
