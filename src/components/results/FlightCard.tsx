@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { BookingLink } from './BookingLink';
 import { BookingApprovalModal } from '@/features/booking/BookingApprovalModal';
+import { FlightDetailsModal } from './FlightDetailsModal';
 import { useI18n } from '@/i18n';
 import { cn, formatDuration } from '@/lib/utils';
 import { featureFlags } from '@/config/feature-flags';
@@ -19,6 +20,7 @@ interface FlightCardProps {
 export function FlightCard({ flight, onFavorite, isFavorited }: FlightCardProps) {
   const { t } = useI18n();
   const [showApproval, setShowApproval] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
     <>
@@ -27,6 +29,12 @@ export function FlightCard({ flight, onFavorite, isFavorited }: FlightCardProps)
         booking={{ type: 'flight', item: flight }}
         onConfirm={() => setShowApproval(false)}
         onCancel={() => setShowApproval(false)}
+      />
+    )}
+    {showDetails && (
+      <FlightDetailsModal
+        flight={flight}
+        onClose={() => setShowDetails(false)}
       />
     )}
     <Card highlighted={flight.isCheapest} hover className="relative">
@@ -85,10 +93,18 @@ export function FlightCard({ flight, onFavorite, isFavorited }: FlightCardProps)
             </div>
           </div>
 
-          {/* Baggage */}
-          <p className="text-xs text-slate-500">
-            🧳 {flight.baggageSummary}
-          </p>
+          {/* Baggage + View Details link */}
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs text-slate-500">
+              🧳 {flight.baggageSummary}
+            </p>
+            <button
+              onClick={() => setShowDetails(true)}
+              className="text-xs text-sky-600 hover:text-sky-800 font-medium underline underline-offset-2 transition-colors"
+            >
+              View full details →
+            </button>
+          </div>
         </div>
 
         {/* Price + CTA */}

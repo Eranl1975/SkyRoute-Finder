@@ -116,6 +116,18 @@ export const TRUSTED_SOURCES: SourceMetadata[] = [
     isOfficial: true,
     addedAt: '2024-01-01T00:00:00.000Z',
   },
+  // Amadeus GDS — multi-airline (400+ carriers)
+  {
+    id: 'amadeus',
+    name: 'Amadeus (Multi-Airline)',
+    domain: 'amadeus.com',
+    trustLevel: 'trusted_partner',
+    type: 'airline',
+    country: 'ES',
+    isActive: true,
+    isOfficial: false,
+    addedAt: '2024-01-01T00:00:00.000Z',
+  },
   // Mock / fallback providers — always trusted (internal, never blocked)
   {
     id: 'mock_flights',

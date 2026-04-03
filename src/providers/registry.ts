@@ -9,6 +9,7 @@ import { MockFlightProvider } from './adapters/mock/MockFlightProvider';
 import { MockHotelProvider } from './adapters/mock/MockHotelProvider';
 import { ElAlAdapter } from './adapters/airlines/ElAlAdapter';
 import { RyanairAdapter } from './adapters/airlines/RyanairAdapter';
+import { AmadeusAdapter } from './adapters/airlines/AmadeusAdapter';
 import { BookingComAdapter } from './adapters/hotels/BookingComAdapter';
 import { env } from '@/lib/env';
 
@@ -26,9 +27,10 @@ export function getProviderRegistry(): ProviderRegistry {
 
   // In live mode, include live adapters first + mock as fallback so results
   // are never empty when live APIs return nothing (e.g. routes with no fares).
+  // Amadeus covers 400+ airlines — runs alongside Ryanair for broader coverage.
   const flightAdapters: IFlightProvider[] = isMock
     ? [new MockFlightProvider()]
-    : [new ElAlAdapter(), new RyanairAdapter(), new MockFlightProvider()];
+    : [new ElAlAdapter(), new RyanairAdapter(), new AmadeusAdapter(), new MockFlightProvider()];
 
   const hotelAdapters: IHotelProvider[] = isMock
     ? [new MockHotelProvider()]
