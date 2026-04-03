@@ -60,7 +60,7 @@ export async function runFlightSearchSkill(input: FlightSearchInput): Promise<Fl
 
   const allRaw: RawFlight[] = rawResults.flatMap((r) =>
     r.status === 'fulfilled' ? r.value : []
-  );
+  ).filter((f) => f.price > 0); // exclude deep-link placeholders (price=0)
 
   logs.push({
     timestamp: nowISO(),

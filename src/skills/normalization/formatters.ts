@@ -15,15 +15,14 @@ export function formatPriceLocale(amount: number, currency: string, locale: Supp
   }).format(amount);
 }
 
-export function formatDateTimeLocale(iso: string, locale: SupportedLocale): string {
+export function formatDateTimeLocale(iso: string, _locale: SupportedLocale): string {
   try {
     const d = parseISO(iso);
-    return new Intl.DateTimeFormat(LOCALE_MAP[locale], {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(d);
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${dd}/${mm} ${hh}:${min}`;
   } catch {
     return iso;
   }

@@ -116,6 +116,29 @@ export const TRUSTED_SOURCES: SourceMetadata[] = [
     isOfficial: true,
     addedAt: '2024-01-01T00:00:00.000Z',
   },
+  // Mock / fallback providers — always trusted (internal, never blocked)
+  {
+    id: 'mock_flights',
+    name: 'Sample Flights',
+    domain: 'localhost',
+    trustLevel: 'trusted_partner',
+    type: 'airline',
+    country: 'IL',
+    isActive: true,
+    isOfficial: false,
+    addedAt: '2024-01-01T00:00:00.000Z',
+  },
+  {
+    id: 'mock_hotels',
+    name: 'Sample Hotels',
+    domain: 'localhost',
+    trustLevel: 'trusted_partner',
+    type: 'hotel',
+    country: 'IL',
+    isActive: true,
+    isOfficial: false,
+    addedAt: '2024-01-01T00:00:00.000Z',
+  },
   // Hotel sources
   {
     id: 'booking_com',
