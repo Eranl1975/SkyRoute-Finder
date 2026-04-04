@@ -11,6 +11,7 @@ import { ElAlAdapter } from './adapters/airlines/ElAlAdapter';
 import { RyanairAdapter } from './adapters/airlines/RyanairAdapter';
 import { DuffelAdapter } from './adapters/airlines/DuffelAdapter';
 import { BookingComAdapter } from './adapters/hotels/BookingComAdapter';
+import { BookingComRapidAdapter } from './adapters/hotels/BookingComRapidAdapter';
 import { env } from '@/lib/env';
 
 export interface ProviderRegistry {
@@ -31,9 +32,11 @@ export function getProviderRegistry(): ProviderRegistry {
     ? [new MockFlightProvider()]
     : [new ElAlAdapter(), new RyanairAdapter(), new DuffelAdapter(), new MockFlightProvider()];
 
+  // BookingComRapidAdapter is enabled when RAPIDAPI_BOOKING_KEY is set (takes priority).
+  // BookingComAdapter (legacy stub) and MockHotelProvider serve as fallbacks.
   const hotelAdapters: IHotelProvider[] = isMock
     ? [new MockHotelProvider()]
-    : [new BookingComAdapter(), new MockHotelProvider()];
+    : [new BookingComRapidAdapter(), new BookingComAdapter(), new MockHotelProvider()];
 
   registryInstance = { flightAdapters, hotelAdapters };
   return registryInstance;

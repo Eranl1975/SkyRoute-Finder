@@ -62,8 +62,16 @@ export async function GET(): Promise<NextResponse<AdminStatusResponse>> {
       isActive: isLive,
     },
     {
+      id: 'booking_com_rapid',
+      name: 'Booking.com (RapidAPI — Live)',
+      type: 'hotel',
+      isMock: false,
+      hasApiKey: Boolean(process.env.RAPIDAPI_BOOKING_KEY),
+      isActive: isLive && Boolean(process.env.RAPIDAPI_BOOKING_KEY),
+    },
+    {
       id: 'booking_com',
-      name: 'Booking.com',
+      name: 'Booking.com (Affiliate API)',
       type: 'hotel',
       isMock: false,
       hasApiKey: Boolean(process.env.BOOKING_COM_API_KEY),
