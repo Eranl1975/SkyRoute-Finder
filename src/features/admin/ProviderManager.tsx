@@ -1,75 +1,102 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { useI18n } from '@/i18n';
 import { featureFlags } from '@/config/feature-flags';
 import { cn } from '@/lib/utils';
-
-interface ProviderEntry {
-  id: string;
-  name: string;
-  type: 'flight' | 'hotel';
-  isMock: boolean;
-  isEnabled: boolean;
-  trustLevel: string;
-}
-
-const INITIAL_PROVIDERS: ProviderEntry[] = [
-  { id: 'mock_flights', name: 'Mock Flights [DEV]', type: 'flight', isMock: true, isEnabled: true, trustLevel: 'official' },
-  { id: 'mock_hotels', name: 'Mock Hotels [DEV]', type: 'hotel', isMock: true, isEnabled: true, trustLevel: 'trusted_partner' },
-  { id: 'elal', name: 'El Al', type: 'flight', isMock: false, isEnabled: false, trustLevel: 'official' },
-  { id: 'ryanair', name: 'Ryanair', type: 'flight', isMock: false, isEnabled: false, trustLevel: 'official' },
-  { id: 'easyjet', name: 'easyJet', type: 'flight', isMock: false, isEnabled: false, trustLevel: 'official' },
-  { id: 'british_airways', name: 'British Airways', type: 'flight', isMock: false, isEnabled: false, trustLevel: 'official' },
-  { id: 'booking_com', name: 'Booking.com', type: 'hotel', isMock: false, isEnabled: false, trustLevel: 'trusted_partner' },
-];
+import type { AdminStatusResponse, ProviderStatus } from '@/app/api/admin/status/route';
 
 export function ProviderManager() {
   const { t } = useI18n();
-  const [providers, setProviders] = useState<ProviderEntry[]>(INITIAL_PROVIDERS);
+  const [status, setStatus] = useState<AdminStatusResponse | null>(null);
+  const [loading, setLoading] = useState(true);
   const [flags, setFlags] = useState(featureFlags);
 
-  function toggleProvider(id: string) {
-    setProviders((p) => p.map((x) => (x.id === id ? { ...x, isEnabled: !x.isEnabled } : x)));
+  useEffect(() => {
+    fetch('/api/admin/status')
+      .then((r) => r.json())
+      .then((data: AdminStatusResponse) => setStatus(data))
+      .catch(() => setStatus(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const flightProviders = status?.providers.filter((p) => p.type === 'flight') ?? [];
+  const hotelProviders = status?.providers.filter((p) => p.type === 'hotel') ?? [];
+
+  function ProviderRow({ p }: { p: ProviderStatus }) {
+    return (
+      <div
+        className={cn(
+          'rounded-xl p-4 border flex items-center justify-between gap-3',
+          p.isActive
+            ? 'border-emerald-700/40 bg-emerald-950/30'
+            : 'border-slate-700 bg-slate-900'
+        )}
+      >
+        <div className="min-w-0">
+          <p className="font-medium text-sm text-white truncate">{p.name}</p>
+          <div className="flex gap-2 mt-1 flex-wrap">
+            <Badge variant={p.type === 'flight' ? 'direct' : 'stopover'}>{p.type}</Badge>
+            {p.isMock && <Badge variant="mock">mock</Badge>}
+            {!p.isMock && (
+              p.hasApiKey
+                ? <Badge variant="official">✓ key set</Badge>
+                : <Badge variant="limited">⚠ no key</Badge>
+            )}
+          </div>
+        </div>
+        <span className={cn(
+          'text-xs font-semibold px-2.5 py-1 rounded-full',
+          p.isActive
+            ? 'bg-emerald-500/20 text-emerald-400'
+            : 'bg-slate-700 text-slate-400'
+        )}>
+          {p.isActive ? 'Active' : 'Inactive'}
+        </span>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-8">
-      {/* Provider list */}
+      {/* Mode banner */}
+      <div className={cn(
+        'rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2',
+        status?.providerMode === 'live'
+          ? 'bg-emerald-950/40 border border-emerald-700/40 text-emerald-300'
+          : 'bg-amber-950/40 border border-amber-700/40 text-amber-300'
+      )}>
+        {status?.providerMode === 'live' ? '🟢' : '🟡'}
+        Provider mode: <strong>{loading ? '…' : (status?.providerMode ?? 'unknown')}</strong>
+        {status?.providerMode !== 'live' && (
+          <span className="ml-2 text-xs opacity-70">Set NEXT_PUBLIC_PROVIDER_MODE=live to use live data</span>
+        )}
+      </div>
+
+      {/* Flight providers */}
       <div>
-        <h3 className="text-white font-semibold mb-4">Adapter Status</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {providers.map((p) => (
-            <div
-              key={p.id}
-              className={cn(
-                'rounded-xl p-4 border flex items-center justify-between gap-3',
-                p.isEnabled
-                  ? 'border-emerald-700/40 bg-emerald-950/30'
-                  : 'border-slate-700 bg-slate-900'
-              )}
-            >
-              <div className="min-w-0">
-                <p className="font-medium text-sm text-white truncate">{p.name}</p>
-                <div className="flex gap-2 mt-1 flex-wrap">
-                  <Badge variant={p.type === 'flight' ? 'direct' : 'stopover'}>{p.type}</Badge>
-                  {p.isMock && <Badge variant="mock">mock</Badge>}
-                  <Badge variant={p.trustLevel as 'official' | 'trusted_partner'}>{p.trustLevel.replace('_', ' ')}</Badge>
-                </div>
-              </div>
-              <Button
-                size="sm"
-                variant={p.isEnabled ? 'danger' : 'secondary'}
-                onClick={() => toggleProvider(p.id)}
-              >
-                {p.isEnabled ? t.admin.disable : t.admin.enable}
-              </Button>
-            </div>
-          ))}
-        </div>
+        <h3 className="text-white font-semibold mb-4">✈ Flight Adapters</h3>
+        {loading ? (
+          <p className="text-slate-400 text-sm">Loading status…</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {flightProviders.map((p) => <ProviderRow key={p.id} p={p} />)}
+          </div>
+        )}
+      </div>
+
+      {/* Hotel providers */}
+      <div>
+        <h3 className="text-white font-semibold mb-4">🏨 Hotel Adapters</h3>
+        {loading ? (
+          <p className="text-slate-400 text-sm">Loading status…</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {hotelProviders.map((p) => <ProviderRow key={p.id} p={p} />)}
+          </div>
+        )}
       </div>
 
       {/* Feature flags */}

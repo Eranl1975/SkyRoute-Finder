@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Input } from '@/components/ui/Input';
+import { DateInput } from '@/components/ui/DateInput';
 import { AirportInput } from '@/components/ui/AirportInput';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
@@ -105,24 +106,22 @@ export function SearchForm({ onSearch, loading, initialValues }: SearchFormProps
           required
         />
 
-        {/* Start date */}
-        <Input
+        {/* Start date — DD/MM/YYYY format */}
+        <DateInput
           label={t.form.startDate}
-          type="date"
           value={values.startDate}
           min={isoDate()}
-          onChange={(e) => set('startDate', e.target.value)}
+          onChange={(v) => set('startDate', v)}
           error={errors.startDate}
           required
         />
 
-        {/* End date */}
-        <Input
+        {/* End date — DD/MM/YYYY format */}
+        <DateInput
           label={t.form.endDate}
-          type="date"
           value={values.endDate}
           min={values.startDate}
-          onChange={(e) => set('endDate', e.target.value)}
+          onChange={(v) => set('endDate', v)}
           error={errors.endDate}
           required
         />

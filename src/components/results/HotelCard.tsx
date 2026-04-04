@@ -1,10 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { BookingLink } from './BookingLink';
-import { BookingApprovalModal } from '@/features/booking/BookingApprovalModal';
 import { useI18n } from '@/i18n';
 import { featureFlags } from '@/config/feature-flags';
 import type { NormalizedHotel } from '@/types/hotel';
@@ -17,17 +14,8 @@ interface HotelCardProps {
 
 export function HotelCard({ hotel, onFavorite, isFavorited }: HotelCardProps) {
   const { t } = useI18n();
-  const [showApproval, setShowApproval] = useState(false);
 
   return (
-    <>
-    {showApproval && (
-      <BookingApprovalModal
-        booking={{ type: 'hotel', item: hotel }}
-        onConfirm={() => setShowApproval(false)}
-        onCancel={() => setShowApproval(false)}
-      />
-    )}
     <Card className="border-sky-100">
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Info */}
@@ -39,7 +27,7 @@ export function HotelCard({ hotel, onFavorite, isFavorited }: HotelCardProps) {
             )}
           </div>
 
-          {/* Stars */}
+          {/* Stars + trust */}
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-amber-400 text-sm" aria-label={`${hotel.stars} stars`}>
               {'★'.repeat(hotel.stars)}{'☆'.repeat(5 - hotel.stars)}
@@ -47,23 +35,24 @@ export function HotelCard({ hotel, onFavorite, isFavorited }: HotelCardProps) {
             <Badge variant={hotel.providerTrust}>{hotel.trustBadge}</Badge>
           </div>
 
-          {/* Location */}
-          <p className="text-sm text-slate-500 mb-1">
-            📍 {hotel.address} — <span className="text-sky-600 font-medium">{hotel.touristArea}</span>
+          {/* Location — address + tourist area */}
+          <p className="text-sm text-slate-600 font-medium mb-0.5">
+            📍 {hotel.address}, {hotel.city}
           </p>
+          <p className="text-xs text-sky-600 font-medium mb-1">{hotel.touristAreaNote}</p>
           {hotel.attractionNote && (
             <p className="text-xs text-emerald-600 font-medium mb-1">
               🗺 {hotel.attractionNote}
             </p>
           )}
 
-          {/* Rating */}
+          {/* Rating + review count */}
           <div className="flex items-center gap-2 mb-2">
             <span className="bg-sky-500 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
               {hotel.rating.toFixed(1)}
             </span>
             <span className="text-sm text-slate-600">
-              {hotel.reviewCount.toLocaleString()} {t.hotel.reviews}
+              {hotel.formattedRating} · {hotel.reviewCount.toLocaleString()} {t.hotel.reviews}
             </span>
           </div>
 
@@ -84,13 +73,14 @@ export function HotelCard({ hotel, onFavorite, isFavorited }: HotelCardProps) {
             <p className="text-xs text-slate-400">{t.hotel.perNight}</p>
           </div>
           <div className="flex gap-2 sm:flex-col sm:w-full">
-            <button
-              onClick={() => setShowApproval(true)}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold transition-colors min-h-[44px]"
+            <a
+              href={hotel.bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold transition-colors min-h-[44px] flex items-center justify-center text-center"
             >
-              {featureFlags.bookingEnabled ? t.hotel.bookHotel : 'Review & Book'}
-            </button>
-            <BookingLink url={hotel.bookingUrl} label={t.hotel.bookHotel} />
+              {t.hotel.bookHotel} ↗
+            </a>
             {onFavorite && (
               <button
                 onClick={() => onFavorite(hotel.id)}
@@ -104,6 +94,5 @@ export function HotelCard({ hotel, onFavorite, isFavorited }: HotelCardProps) {
         </div>
       </div>
     </Card>
-    </>
   );
 }
