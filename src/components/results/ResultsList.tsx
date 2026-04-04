@@ -91,9 +91,21 @@ export function ResultsList({ result, favorites = new Set(), onFavorite }: Resul
       {/* Hotel result */}
       {result.params.includeHotel && (
         <section aria-labelledby="hotel-heading">
-          <h2 id="hotel-heading" className="text-xl font-bold text-slate-900 mb-4">
-            🏨 {t.hotel.recommended}
-          </h2>
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <h2 id="hotel-heading" className="text-xl font-bold text-slate-900">
+              🏨 Hotel — Direct Booking
+            </h2>
+            {hotel.recommended && (
+              <a
+                href={hotel.recommended.bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs bg-sky-100 text-sky-700 hover:bg-sky-200 px-3 py-1 rounded-full font-medium transition-colors"
+              >
+                Reserve now ↗
+              </a>
+            )}
+          </div>
           {hasHotel ? (
             <HotelCard
               hotel={hotel.recommended!}

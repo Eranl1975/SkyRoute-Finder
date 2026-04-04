@@ -48,9 +48,6 @@ export function Header({ variant = 'user' }: HeaderProps) {
         {variant === 'admin' && (
           <nav className="hidden sm:flex items-center gap-1">
             <AdminNavLink href="/admin">{t.admin.dashboard}</AdminNavLink>
-            <AdminNavLink href="/admin/providers">{t.admin.providers}</AdminNavLink>
-            <AdminNavLink href="/admin/logs">{t.admin.logs}</AdminNavLink>
-            <AdminNavLink href="/admin/settings">{t.admin.settings}</AdminNavLink>
           </nav>
         )}
 
@@ -62,6 +59,14 @@ export function Header({ variant = 'user' }: HeaderProps) {
               className="hidden sm:inline-flex text-xs text-slate-400 hover:text-slate-600 transition-colors px-2 py-1 rounded"
             >
               {t.nav.admin}
+            </Link>
+          )}
+          {variant === 'admin' && (
+            <Link
+              href="/user"
+              className="hidden sm:inline-flex text-xs bg-sky-500 hover:bg-sky-600 text-white px-3 py-1.5 rounded-lg font-medium transition-colors"
+            >
+              ← User Page
             </Link>
           )}
         </div>

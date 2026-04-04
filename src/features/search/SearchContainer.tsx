@@ -31,6 +31,17 @@ const STATUS_LABELS: Record<SearchStatus, string> = {
   error: 'Error',
 };
 
+/** Shift saved dates to today keeping the same trip duration in days. */
+function shiftDatesToToday(params: SearchParamsInput): SearchParamsInput {
+  const origStart = new Date(params.startDate + 'T00:00:00Z');
+  const origEnd = new Date(params.endDate + 'T00:00:00Z');
+  const durationDays = Math.max(1, Math.round((origEnd.getTime() - origStart.getTime()) / 86400000));
+  const today = new Date();
+  const newStart = today.toISOString().slice(0, 10);
+  const newEnd = new Date(today.getTime() + durationDays * 86400000).toISOString().slice(0, 10);
+  return { ...params, startDate: newStart, endDate: newEnd };
+}
+
 export function SearchContainer() {
   const { t } = useI18n();
   const [searchStatus, setSearchStatus] = useState<SearchStatus>('idle');
@@ -46,12 +57,29 @@ export function SearchContainer() {
   const [saveName, setSaveName] = useState('');
   const [saveConfirmed, setSaveConfirmed] = useState(false);
 
+  // Re-run from saved/favorites: pre-populate form + auto-search with shifted dates
+  const [rerunParams, setRerunParams] = useState<SearchParamsInput | null>(null);
+  const [formKey, setFormKey] = useState(0);
+
   // Lookup map so we can persist full items when favoriting
   const itemMapRef = useRef<Map<string, { type: 'flight' | 'hotel'; item: NormalizedFlight | NormalizedHotel }>>(new Map());
 
   // Load favorites from localStorage on mount
   useEffect(() => {
     setFavorites(getFavoriteIds());
+  }, []);
+
+  // Read re-run params from sessionStorage on mount (set by Saved/Favorites pages)
+  useEffect(() => {
+    const raw = typeof window !== 'undefined' ? sessionStorage.getItem('skyroute_rerun') : null;
+    if (!raw) return;
+    sessionStorage.removeItem('skyroute_rerun');
+    try {
+      const stored: SearchParamsInput = JSON.parse(raw);
+      const shifted = shiftDatesToToday(stored);
+      setRerunParams(shifted);
+      setFormKey((k) => k + 1); // force SearchForm remount with new initialValues
+    } catch { /* ignore malformed data */ }
   }, []);
 
   // Rebuild item map whenever result changes
@@ -104,6 +132,14 @@ export function SearchContainer() {
     }
   }, [t]);
 
+  // Auto-trigger search when re-run params are ready (after form remount)
+  useEffect(() => {
+    if (rerunParams) {
+      handleSearch(rerunParams);
+      setRerunParams(null);
+    }
+  }, [rerunParams, handleSearch]);
+
   const toggleFavorite = useCallback((id: string) => {
     const mapped = itemMapRef.current.get(id);
     setFavorites((prev) => {
@@ -121,6 +157,28 @@ export function SearchContainer() {
     });
   }, []);
 
+  // Save best flight + hotel to favorites in one click
+  const handleSaveAllToFavorites = useCallback(() => {
+    if (!result) return;
+    const map = itemMapRef.current;
+    const newFavs = new Set(favorites);
+
+    const bestFlight = result.flights.flights[0];
+    if (bestFlight && !newFavs.has(bestFlight.id)) {
+      addFavorite({ id: bestFlight.id, type: 'flight', item: bestFlight });
+      map.set(bestFlight.id, { type: 'flight', item: bestFlight });
+      newFavs.add(bestFlight.id);
+    }
+    const hotel = result.hotel.recommended;
+    if (hotel && !newFavs.has(hotel.id)) {
+      addFavorite({ id: hotel.id, type: 'hotel', item: hotel });
+      map.set(hotel.id, { type: 'hotel', item: hotel });
+      newFavs.add(hotel.id);
+    }
+
+    setFavorites(newFavs);
+  }, [result, favorites]);
+
   const handleSaveSearch = () => {
     if (!lastSearch || !result) return;
     const name = saveName.trim() || `${lastSearch.origin} → ${lastSearch.destination}`;
@@ -135,11 +193,20 @@ export function SearchContainer() {
     setSaveName('');
   };
 
+  const bestFlightFavorited = result?.flights.flights[0] ? favorites.has(result.flights.flights[0].id) : false;
+  const hotelFavorited = result?.hotel.recommended ? favorites.has(result.hotel.recommended.id) : false;
+  const allFavorited = bestFlightFavorited && (result?.hotel.recommended ? hotelFavorited : true);
+
   return (
     <div className="space-y-8">
       {/* Search form */}
       <Card padding="lg" className="shadow-md">
-        <SearchForm onSearch={handleSearch} loading={searchStatus !== 'idle' && searchStatus !== 'done' && searchStatus !== 'error'} />
+        <SearchForm
+          key={formKey}
+          onSearch={handleSearch}
+          loading={searchStatus !== 'idle' && searchStatus !== 'done' && searchStatus !== 'error'}
+          initialValues={rerunParams ?? undefined}
+        />
       </Card>
 
       {/* Status indicator */}
@@ -165,7 +232,7 @@ export function SearchContainer() {
         <>
           <ResultsList result={result} favorites={favorites} onFavorite={toggleFavorite} />
 
-          {/* Save / Favorites action bar */}
+          {/* Action bar */}
           <div className="flex flex-wrap gap-3 items-center pt-2">
             {saveConfirmed ? (
               <span className="text-sm text-emerald-600 font-medium">✅ Search saved!</span>
@@ -202,17 +269,20 @@ export function SearchContainer() {
               </button>
             )}
 
+            {/* Save best flight + hotel to favorites in one click */}
+            <button
+              onClick={handleSaveAllToFavorites}
+              disabled={allFavorited}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border text-sm font-medium transition-colors min-h-[40px] disabled:opacity-50 disabled:cursor-not-allowed border-orange-200 hover:bg-orange-50 text-orange-600"
+            >
+              {allFavorited ? '❤️ Saved to Favorites' : '🤍 Save to Favorites'}
+            </button>
+
             <a
               href="/user/saved"
               className="text-sm text-sky-600 hover:text-sky-800 font-medium underline underline-offset-2 transition-colors"
             >
               Open Saved Searches →
-            </a>
-            <a
-              href="/user/favorites"
-              className="text-sm text-sky-600 hover:text-sky-800 font-medium underline underline-offset-2 transition-colors"
-            >
-              Open Favorites →
             </a>
           </div>
 

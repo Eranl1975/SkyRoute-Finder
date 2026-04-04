@@ -8,6 +8,23 @@ import { getFavorites, removeFavorite, type FavoriteItem } from '@/lib/storage';
 import { formatPrice } from '@/lib/utils';
 import type { NormalizedFlight } from '@/types/flight';
 import type { NormalizedHotel } from '@/types/hotel';
+import type { SearchParamsInput } from '@/schemas/searchSchema';
+
+function rerunFlight(f: NormalizedFlight) {
+  const params: Partial<SearchParamsInput> = {
+    origin: f.origin,
+    destination: f.destination,
+    passengers: 1,
+    stopoverPreference: f.isDirect ? 'direct_only' : 'include_stopovers',
+    includeHotel: true,
+    baggage: { checkedBags: f.baggage.checkedBags, checkedBagWeightKg: f.baggage.checkedBagWeightKg, trolley: f.baggage.trolley, trolleyCount: f.baggage.trolleyCount },
+    // dates intentionally omitted — SearchContainer will shift to today + 7 days
+    startDate: new Date().toISOString().slice(0, 10),
+    endDate: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
+  };
+  sessionStorage.setItem('skyroute_rerun', JSON.stringify(params));
+  window.location.href = '/user';
+}
 
 function formatSavedDate(iso: string): string {
   try {
@@ -44,7 +61,13 @@ function FlightFavoriteCard({ fav, onRemove }: { fav: FavoriteItem & { type: 'fl
             {f.isMock && <Badge variant="mock">Mock</Badge>}
           </div>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex gap-2 shrink-0 flex-wrap">
+          <button
+            onClick={() => rerunFlight(f)}
+            className="px-4 py-2 rounded-xl border border-sky-200 hover:bg-sky-50 text-sky-600 text-sm font-semibold transition-colors min-h-[40px]"
+          >
+            Search Again ↻
+          </button>
           <a
             href={f.bookingUrl}
             target="_blank"
