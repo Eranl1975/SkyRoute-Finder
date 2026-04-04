@@ -153,8 +153,19 @@ export const TRUSTED_SOURCES: SourceMetadata[] = [
   },
   // Hotel sources
   {
+    id: 'booking_com_rapid',
+    name: 'Booking.com (RapidAPI — Live)',
+    domain: 'booking.com',
+    trustLevel: 'trusted_partner',
+    type: 'hotel',
+    country: 'NL',
+    isActive: true,
+    isOfficial: false,
+    addedAt: '2024-01-01T00:00:00.000Z',
+  },
+  {
     id: 'booking_com',
-    name: 'Booking.com',
+    name: 'Booking.com (Affiliate)',
     domain: 'booking.com',
     trustLevel: 'trusted_partner',
     type: 'hotel',
