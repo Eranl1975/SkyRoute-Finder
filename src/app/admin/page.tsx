@@ -142,6 +142,7 @@ function OverviewTab({ status }: { status: AdminStatusResponse | null }) {
         <div className="bg-slate-900 border border-slate-800 rounded-xl divide-y divide-slate-800">
           {[
             { label: 'Provider mode = live', ok: isLive, fix: 'Set NEXT_PUBLIC_PROVIDER_MODE=live in Vercel' },
+            { label: 'El Al (direct booking — no key needed)', ok: status?.providers.find(p => p.id === 'elal')?.isActive ?? false, fix: 'Set NEXT_PUBLIC_PROVIDER_MODE=live to activate' },
             { label: 'Duffel flights API key', ok: status?.providers.find(p => p.id === 'duffel')?.hasApiKey ?? false, fix: 'Add DUFFEL_ACCESS_TOKEN from app.duffel.com' },
             { label: 'RapidAPI hotel key', ok: status?.providers.find(p => p.id === 'booking_com_rapid')?.hasApiKey ?? false, fix: 'Add RAPIDAPI_BOOKING_KEY from rapidapi.com/apidojo/api/booking' },
           ].map(({ label, ok, fix }) => (

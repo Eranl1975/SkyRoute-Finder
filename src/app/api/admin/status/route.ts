@@ -47,11 +47,11 @@ export async function GET(): Promise<NextResponse<AdminStatusResponse>> {
     },
     {
       id: 'elal',
-      name: 'El Al',
+      name: 'El Al (Direct Booking)',
       type: 'flight',
       isMock: false,
-      hasApiKey: Boolean(process.env.ELAL_API_KEY),
-      isActive: isLive && Boolean(process.env.ELAL_API_KEY),
+      hasApiKey: true, // no API key needed — uses direct booking URL like Ryanair
+      isActive: isLive,
     },
     {
       id: 'ryanair',
