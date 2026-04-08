@@ -56,17 +56,29 @@ export class BookingComRapidAdapter implements IHotelProvider {
 
   async search(params: HotelSearchParams): Promise<RawHotel[]> {
     const apiKey = process.env.RAPIDAPI_BOOKING_KEY;
-    if (!apiKey) return [];
+    if (!apiKey) {
+      console.warn('[BookingComRapid] No RAPIDAPI_BOOKING_KEY — skipping');
+      return [];
+    }
 
     try {
       // Step 1: resolve destination → dest_id
       const locUrl = `${BASE}/v1/hotels/locations?name=${encodeURIComponent(params.destination)}&locale=en-gb`;
+      console.log(`[BookingComRapid] Step1 location lookup: ${locUrl}`);
       const locRes = await fetch(locUrl, { headers: this.headers, signal: AbortSignal.timeout(8000) });
-      if (!locRes.ok) return [];
+      if (!locRes.ok) {
+        console.error(`[BookingComRapid] Step1 failed: ${locRes.status} ${locRes.statusText}`);
+        return [];
+      }
 
       const locations: RapidLocation[] = await locRes.json().catch(() => []);
+      console.log(`[BookingComRapid] Step1 found ${locations.length} locations`);
       const loc = locations.find((l) => l.dest_type === 'city' || l.dest_type === 'district') ?? locations[0];
-      if (!loc?.dest_id) return [];
+      if (!loc?.dest_id) {
+        console.warn(`[BookingComRapid] No dest_id found for "${params.destination}"`);
+        return [];
+      }
+      console.log(`[BookingComRapid] Using dest_id=${loc.dest_id} dest_type=${loc.dest_type}`);
 
       // Step 2: search hotels
       const nights = Math.max(1, Math.round(
@@ -91,10 +103,14 @@ export class BookingComRapidAdapter implements IHotelProvider {
         headers: this.headers,
         signal: AbortSignal.timeout(12000),
       });
-      if (!searchRes.ok) return [];
+      if (!searchRes.ok) {
+        console.error(`[BookingComRapid] Step2 failed: ${searchRes.status} ${searchRes.statusText}`);
+        return [];
+      }
 
       const body = await searchRes.json().catch(() => null);
       const hotels: RapidHotel[] = Array.isArray(body?.result) ? body.result : [];
+      console.log(`[BookingComRapid] Step2 returned ${hotels.length} hotels`);
 
       return hotels.slice(0, 5).map((h): RawHotel => {
         const name = h.hotel_name ?? h.name ?? 'Unknown Hotel';
@@ -132,7 +148,8 @@ export class BookingComRapidAdapter implements IHotelProvider {
           fetchedAt: nowISO(),
         };
       });
-    } catch {
+    } catch (err) {
+      console.error('[BookingComRapid] Unexpected error:', err);
       return []; // fall through to mock provider
     }
   }
